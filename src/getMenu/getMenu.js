@@ -2,6 +2,7 @@ import sendReqMenu from "./sendReqMenu.js";
 import { Cookie } from "./Cookie.js";
 import { mkdirSync, writeFileSync } from "fs";
 import extractData from "./extractData.js";
+import { exit } from "process";
 
 /**
  *
@@ -19,16 +20,25 @@ export default async function getMenu(
   longitude,
 ) {
   // delay
-  await new Promise((resolve) => setTimeout(resolve, Math.random() * 2000));
-  let get = await fetch("https://www.ubereats.com/tw/feed?diningMode=DELIVERY");
-  cookie.updateCookies(get.headers.getSetCookie().join("; "));
-  cookie.setCookie("mcd_restaurant", "");
+  await new Promise((resolve) =>
+    setTimeout(resolve, 1_000 * 5 + Math.random() * 1_000),
+  );
+
+  if (Object.keys(cookie.cookies).length === 0) {
+    let get = await fetch(
+      `https://www.foodpanda.com.tw/restaurant/${shopUuid}/`,
+    );
+    console.log(shopUuid, latitude, longitude, get.status);
+    cookie.updateCookies(get.headers.getSetCookie().join("; "));
+  }
 
   let now = new Date();
 
   // fetch logic
   let response = await sendReqMenu(cookie, shopUuid, latitude, longitude);
-  let jsonPath = `../../../uber_data/uber_menu/json/`;
+  console.log(shopUuid, latitude, longitude, response.status);
+  cookie.updateCookies(response.headers.getSetCookie().join("; "));
+  let jsonPath = `../../../panda_data_js/panda_menu/json/`;
   mkdirSync(jsonPath, { recursive: true });
   // writeFileSync(
   // 	`${jsonPath}/${shopUuid}.json`,

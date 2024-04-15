@@ -4,31 +4,39 @@ import { mkdirSync, readdirSync } from "fs";
 import { readCSV } from "danfojs-node";
 import { DataFrame } from "danfojs-node";
 
+const DEBUG_MODE = false;
+
 async function main() {
   const date = new Date();
-  const TODAY = `${date.getFullYear()}-${
-    date.getMonth() + 1
-  }-${date.getDate()}`;
 
-  const PATH = `../../../uber_data/uber_menu/${TODAY}`;
+  let TODAY = `${date.getFullYear()}`;
+  if (date.getMonth() + 1 < 10)
+    TODAY += `-0${date.getMonth() + 1}`;
+  else TODAY += `-${date.getMonth() + 1}`;
+  if (date.getDate() + 1 < 10)
+    TODAY += `-0${date.getDate()}`;
+  else TODAY += `-${date.getDate()}`;
+
+  const PATH = `../../../panda_data_js/panda_menu/${TODAY}`;
 
   // 確保輸出目錄存在
   mkdirSync(PATH, { recursive: true });
 
   // read shopinformation
-  const locationPath = `../../../uber_data/shopLst/${TODAY}`;
+  const locationPath = `../../../panda_data/shopLst/${TODAY}`;
   let locationLst = readdirSync(locationPath);
-  const menuPath = `../../../uber_data/uber_menu/${TODAY}`;
+  const menuPath = `../../../panda_data_js/panda_menu/${TODAY}`;
 
   // init cookie
   let cookie = new Cookie();
   cookie.init();
 
   for (const location of locationLst) {
+    if (!location.startsWith("shopLst")) continue;
     let stores = [];
     let df = await readCSV(`${locationPath}/${location}`);
     df = df.loc({
-      columns: ["storeUuid", "name", "anchor_latitude", "anchor_longitude"],
+      columns: ["shopCode", "shopName", "anchor_latitude", "anchor_longitude"],
     }).values;
     console.log(`(${df[0][2]}, ${df[0][3]}): ${df.length} shops`);
     for (const row of df)

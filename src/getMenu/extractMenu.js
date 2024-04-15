@@ -5,47 +5,33 @@
  * @return {object} - The generated menu object.
  */
 export default function getMenuData(data) {
-  const menu = extractMenu(data.catalogSectionsMap);
   let result = {
-    uuid: [],
+    id: [],
+    code: [],
     product: [],
     description: [],
-    price: [],
+    variations: {
+      code: [],
+      name: [],
+      preDiscountPrice: [],
+    },
     isSoldOut: [],
   };
-  for (const item of menu) {
-    result.uuid.push(item.uuid ? item.uuid : NaN);
-    result.product.push(item.title ? item.title : NaN);
-    result.description.push(item.itemDescription ? item.itemDescription : NaN);
-    result.price.push(item.price ? item.price / 100 : NaN);
-    result.isSoldOut.push(
-      typeof item.isSoldOut === "boolean" ? item.isSoldOut : NaN,
-    );
+  for (const category of data.menus[0].menu_categories) {
+    for (const item of category.products) {
+      result.id.push(item.id ? item.id : NaN);
+      result.code.push(item.code ? item.code : NaN);
+      result.product.push(item.name ? item.name : NaN);
+      result.description.push(item.description ? item.description : NaN);
+      result.isSoldOut.push(item.is_sold_out ? item.is_sold_out : NaN);
+
+      // variations
+      for (const variation of item.product_variations) {
+        result.variations.code.push(variation.code);
+        result.variations.name.push(variation.name);
+        result.variations.preDiscountPrice.push(variation.preDiscountPrice);
+      }
+    }
   }
   return result;
-}
-
-/**
- * This function will extract the menu from the "catalogSectionsMap"
- *
- * @param {object} catalogSectionsMap
- * @return {Array}
- */
-function extractMenu(catalogSectionsMap) {
-  const sections = Object.values(catalogSectionsMap);
-  let menuItems = [];
-  for (const section of sections) menuItems.push(...extractItems(section));
-  return menuItems.flat();
-}
-
-/*
- * Note: if the section's type is "HORIZONTAL_GRID", it may be popular items
- */
-
-/**
- *
- * @param {Array<Object>} section
- */
-function extractItems(section) {
-  return section.map((e) => Object.values(e.payload)[0].catalogItems);
 }

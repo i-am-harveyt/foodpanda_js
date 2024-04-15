@@ -31,71 +31,66 @@ export default function extractData(data, now, latitude, longitude) {
 
   // uuid and title
   try {
-    result.shopCode = data.uuid;
-    result.shopName = `"${data.title}"`;
+    result.shopCode = data.code;
+    result.shopName = `"${data.name}"`;
   } catch (e) {
     return;
   }
 
   // location data
   try {
-    let loc = data.location;
-    result.address = `"${loc.address}"`;
-    result.postalCode = loc.postalCode ? `"${loc.postalCode}"` : NaN;
-    result.city = `"${loc.city}"`;
-    result.shopLat = loc.latitude;
-    result.shopLng = loc.longitude;
+    result.address = `"${data.address}"`;
+    result.postalCode = data.post_code ? `"${data.post_code}"` : NaN;
+    result.shopLat = data.latitude;
+    result.shopLng = data.longitude;
   } catch (e) {
-    // console.error(`${data.uuid} has no location info`);
+    console.error(`${data.uuid} has no location info`);
   }
 
   // waiting-time
   try {
-    result.pickupTime = `"${data.etaRange.text}"`;
+    result.pickupTime = `"${data.delivery_duration_range}"`;
   } catch (e) {
-    // console.error(`${data.uuid} has no waiting-time info`);
+    console.error(`${data.uuid} has no waiting-time info`);
   }
 
   // delivery fee
   try {
-    result.deliverFee = `"${data.fareBadge.text}"`;
+    result.deliverFee = `"${data.minimum_delivery_fee}"`;
   } catch (e) {
-    // console.error(`${data.uuid} has no delivery-fee info`);
+    console.error(`${data.uuid} has no delivery-fee info`);
   }
 
   // rating
   try {
-    result.rate = data.rating.ratingValue;
-    result.rateCt = data.rating.reviewCount;
+    result.rate = data.rating;
+    result.rateCt = data.rating;
   } catch (e) {
-    // console.error(`${data.uuid} has no rating`);
+    console.error(`${data.uuid} has no rating`);
   }
 
   // store available?
   try {
-    result.storeAvailabilityStatus =
-      data.storeInfoMetadata.storeAvailabilityStatus.state;
+    result.is_delivery_enabled = data.is_delivery_enabled;
   } catch (e) {
-    // console.error(`${data.uuid} has no availability`);
+    console.error(`${data.uuid} has no availability`);
   }
 
   // categories
   try {
     // encoded as base64
-    result.catLst = Buffer.from(JSON.stringify(data.categories)).toString(
+    result.catLst = Buffer.from(JSON.stringify(data.cuisines)).toString(
       "base64",
     );
   } catch (e) {
-    // console.error(`${data.uuid} has no categories`);
+    console.error(`${data.uuid} has no categories`);
   }
 
   // chain
   try {
-    result.chain = Buffer.from(JSON.stringify(data.parentChain)).toString(
-      "base64",
-    );
+    result.chain = Buffer.from(JSON.stringify(data.chain)).toString("base64");
   } catch (e) {
-    // console.error(`${data.uuid} may not have a chain or something's wrong`);
+    console.error(`${data.uuid} may not have a chain or something's wrong`);
   }
 
   // menu
@@ -105,7 +100,7 @@ export default function extractData(data, now, latitude, longitude) {
       "base64",
     );
   } catch (e) {
-    // console.error(`${data.uuid} has no menu`);
+    console.error(`${data.uuid} has no menu`);
   }
 
   return result;

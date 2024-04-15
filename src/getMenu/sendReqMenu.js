@@ -9,39 +9,43 @@ import { Cookie } from "../getShop/Cookie";
  * @returns Promise<Response> | boolean
  */
 export default async function sendReqMenu(
-	cookie,
-	shopUuid,
-	latitude,
-	longitude
+  cookie,
+  shopUuid,
+  latitude,
+  longitude,
 ) {
-	try {
-		return await fetch(
-			"https://www.ubereats.com/_p/api/getStoreV1?localeCode=tw",
-			{
-				headers: {
-					accept: "*/*",
-					"accept-language": "en-US,en;q=0.9",
-					"content-type": "application/json",
-					"sec-ch-prefers-color-scheme": "dark",
-					"sec-ch-ua": '"Chromium";v="119", "Not?A_Brand";v="24"',
-					"sec-ch-ua-mobile": "?0",
-					"sec-ch-ua-platform": '"macOS"',
-					"sec-fetch-dest": "empty",
-					"sec-fetch-mode": "cors",
-					"sec-fetch-site": "same-origin",
-					"x-csrf-token": "x",
-					"x-uber-client-gitref": "b6782086d4ce4feb4b34bfbdda29fc342b2fa274",
-					cookie: cookie.gen(latitude, longitude),
-				},
-				body: JSON.stringify({
-					storeUuid: shopUuid,
-					diningMode: "DELIVERY",
-				}),
-				method: "POST",
-			}
-		);
-	} catch (e) {
-		console.error(e);
-	}
-	return false;
+  try {
+    return await fetch(
+      `https://tw.fd-api.com/api/v5/vendors/${shopUuid}?` +
+        "include=menus,bundles,multiple_discounts&language_id=6&" +
+        "opening_type=delivery&basket_currency=TWD&" +
+        `latitude=${latitude}&longitude=${longitude}`,
+      {
+        method: "GET",
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:124.0) Gecko/20100101 Firefox/124.0",
+          Accept:
+            "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+          "Accept-Language": "zh-TW,zh;q=0.8,en-US;q=0.5,en;q=0.3",
+          "Accept-Encoding": "gzip, deflate, br",
+          DNT: "1",
+          "Sec-GPC": "1",
+          Connection: "keep-alive",
+          Cookie: cookie.gen(),
+          "Upgrade-Insecure-Requests": "1",
+          "Sec-Fetch-Dest": "document",
+          "Sec-Fetch-Mode": "navigate",
+          "Sec-Fetch-Site": "none",
+          "Sec-Fetch-User": "?1",
+          Pragma: "no-cache",
+          "Cache-Control": "no-cache",
+          TE: "trailers",
+        },
+      },
+    );
+  } catch (e) {
+    console.error(e);
+  }
+  return false;
 }

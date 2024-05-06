@@ -27,6 +27,7 @@ export default function extractData(data, now, latitude, longitude) {
     catLst: NaN,
     chain: NaN,
     menu: NaN,
+    is_shop_price: NaN,
   };
 
   // uuid and title
@@ -101,6 +102,16 @@ export default function extractData(data, now, latitude, longitude) {
     );
   } catch (e) {
     console.error(`${data.uuid} has no menu`);
+  }
+
+  // is_shop_price
+  try {
+    for (let item of data["food_characteristics"]) {
+			console.log(item)
+      if (item["name"].includes("店內價")) result.is_shop_price = true;
+    }
+  } catch (e) {
+    console.error(`${data.code} has no food_characteristics(shop_price)`);
   }
 
   return result;

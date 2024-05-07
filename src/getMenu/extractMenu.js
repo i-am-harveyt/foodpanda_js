@@ -14,6 +14,7 @@ export default function getMenuData(data) {
       code: [],
       name: [],
       preDiscountPrice: [],
+      discountedPrice: [],
     },
     isSoldOut: [],
   };
@@ -23,13 +24,14 @@ export default function getMenuData(data) {
       result.code.push(item.code ? item.code : NaN);
       result.product.push(item.name ? item.name : NaN);
       result.description.push(item.description ? item.description : NaN);
-      result.isSoldOut.push(item.is_sold_out ? item.is_sold_out : NaN);
+      result.isSoldOut.push(item.is_sold_out);
 
       // variations
       for (const variation of item.product_variations) {
         result.variations.code.push(variation.code);
         result.variations.name.push(variation.name);
-        result.variations.preDiscountPrice.push(variation.preDiscountPrice);
+        result.variations.preDiscountPrice.push(variation.price_before_discount);
+        result.variations.discountedPrice.push(variation.price);
       }
     }
   }

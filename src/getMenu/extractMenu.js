@@ -5,39 +5,27 @@
  * @return {object} - The generated menu object.
  */
 export default function getMenuData(data) {
-	let result = {
-		id: [],
-		code: [],
-		product: [],
-		description: [],
-		variations: {
-			code: [],
-			name: [],
-			preDiscountPrice: [],
-			discountedPrice: [],
-		},
-		isSoldOut: [],
-		tags: [],
-		description: [],
-	};
+	let result = [];
 	for (const category of data.menus[0].menu_categories) {
-		for (const item of category.products) {
-			result.id.push(item.id ? item.id : NaN);
-			result.code.push(item.code ? item.code : NaN);
-			result.product.push(item.name ? item.name : NaN);
-			result.description.push(item.description ? item.description : NaN);
-			result.isSoldOut.push(item.is_sold_out);
-
+		for (const product of category.products) {
+			let productId = product.id ? product.id : NaN;
+			let productCode = product.code ? product.code : NaN;
+			let productName = product.name ? product.name : NaN;
+			let productDesc = product.description ? product.description : NaN;
 			// variations
-			for (const variation of item.product_variations) {
-				result.variations.code.push(variation.code);
-				result.variations.name.push(variation.name);
-				result.variations.preDiscountPrice.push(
-					variation.price_before_discount
-				);
-				result.variations.discountedPrice.push(variation.price);
-			}
-      result.tags.push(item.tags)
+			for (const variation of product.product_variations)
+				result.push({
+					id: productId,
+					productCode: productCode,
+					variationCode: variation.code,
+					product:
+						`${productName}` + (variation.name !== undefined ? `-${variation.name}` : ""),
+					description: productDesc,
+					preDiscountPrice: variation.price_before_discount,
+					price: variation.price,
+					isSoldOut: product.is_sold_out,
+					tags: product.tags,
+				});
 		}
 	}
 	return result;

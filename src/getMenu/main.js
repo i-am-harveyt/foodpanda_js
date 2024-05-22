@@ -13,7 +13,7 @@ async function main() {
   if (date.getMonth() + 1 < 10)
     TODAY += `-0${date.getMonth() + 1}`;
   else TODAY += `-${date.getMonth() + 1}`;
-  if (date.getDate() + 1 < 10)
+  if (date.getDate() < 10)
     TODAY += `-0${date.getDate()}`;
   else TODAY += `-${date.getDate()}`;
 

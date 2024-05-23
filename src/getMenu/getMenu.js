@@ -38,7 +38,9 @@ export default async function getMenu(
 	let response = await sendReqMenu(cookie, shopUuid, latitude, longitude);
 	console.log(shopUuid, latitude, longitude, response.status);
 	cookie.updateCookies(response.headers.getSetCookie().join("; "));
-	let jsonPath = `../../../panda_data_js/panda_menu/json/`;
+	let jsonPath = `../../../panda_data_js/panda_menu/${
+		now.getMonth() + 1
+	}-${now.getDate()}/json/`;
 	mkdirSync(jsonPath, { recursive: true });
 	writeFileSync(
 		`${jsonPath}/${shopUuid}.json`,

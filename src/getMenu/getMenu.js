@@ -40,14 +40,15 @@ export default async function getMenu(
 	cookie.updateCookies(response.headers.getSetCookie().join("; "));
 	const data = await response.json();
 
-	try {
-		const TODAY = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
-		const jsonPath = `../../../panda_data_js/panda_menu/json/${TODAY}`;
-		mkdirSync(jsonPath, { recursive: true });
-		writeFileSync(`${jsonPath}/${shopUuid}.json`, JSON.stringify(data));
-	} catch (error) {
-		console.log(error);
-	}
+	// write to json
+	// try {
+	// 	const TODAY = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+	// 	const jsonPath = `../../../panda_data_js/panda_menu/json/${TODAY}`;
+	// 	mkdirSync(jsonPath, { recursive: true });
+	// 	writeFileSync(`${jsonPath}/${shopUuid}.json`, JSON.stringify(data));
+	// } catch (error) {
+	// 	console.log(error);
+	// }
 
 	// data conversion
 	return extractData(data.data, now, latitude, longitude);

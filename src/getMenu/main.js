@@ -20,14 +20,27 @@ async function main() {
 	// 確保輸出目錄存在
 	mkdirSync(PATH, { recursive: true });
 
+	// init cookie
+	let cookie = new Cookie();
+	cookie.init();
+
+	// 如果在 debug 模式，側特定的店家就夠了
+	if (DEBUG_MODE) {
+		await getMenu(
+			cookie,
+			"abmy",
+			"",
+			25.0531908,
+			121.45147382,
+		)
+		return;
+	}
+
 	// read shopinformation
 	const locationPath = `../../../panda_data/shopLst/${TODAY}`;
 	let locationLst = readdirSync(locationPath);
 	const menuPath = `../../../panda_data_js/panda_menu/${TODAY}`;
 
-	// init cookie
-	let cookie = new Cookie();
-	cookie.init();
 
 	for (const location of locationLst) {
 		if (!location.startsWith("shopLst")) continue;

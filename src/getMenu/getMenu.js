@@ -45,7 +45,7 @@ export default async function getMenu(
 	// 	const TODAY = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
 	// 	const jsonPath = `../../../panda_data_js/panda_menu/json/${TODAY}`;
 	// 	mkdirSync(jsonPath, { recursive: true });
-	// 	writeFileSync(`${jsonPath}/${shopUuid}.json`, JSON.stringify(data));
+	// 	writeFileSync(`${jsonPath}/${latitude}_{longitude}_${shopUuid}.json`, JSON.stringify(data));
 	// } catch (error) {
 	// 	console.log(error);
 	// }

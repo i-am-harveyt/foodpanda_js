@@ -44,7 +44,7 @@ export default async function getMenu(
   if (grepJson) {
     try {
       const TODAY = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
-      const jsonPath = `../../../panda_data_js/panda_menu/json/${TODAY}`;
+      const jsonPath = `../../../panda_data_js/panda_menu/json/compensate_${TODAY}`;
       mkdirSync(jsonPath, { recursive: true });
       writeFileSync(
         `${jsonPath}/${latitude}_${longitude}_${shopUuid}.json`,

@@ -14,7 +14,7 @@ async function main() {
   if (date.getDate() < 10) TODAY += `-0${date.getDate()}`;
   else TODAY += `-${date.getDate()}`;
 
-  const PATH = `../../../panda_data_js/panda_menu/${TODAY}`;
+  const PATH = `../../../panda_data_js/panda_menu/compensate_${TODAY}`;
 
   // 確保輸出目錄存在
   mkdirSync(PATH, { recursive: true });

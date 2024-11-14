@@ -2,7 +2,6 @@ import sendReqMenu from "./sendReqMenu.js";
 import { Cookie } from "./Cookie.js";
 import { mkdirSync, writeFileSync } from "fs";
 import extractData from "./extractData.js";
-import { exit } from "process";
 
 /**
  *
@@ -48,7 +47,7 @@ export default async function getMenu(
       const jsonPath = `../../../panda_data_js/panda_menu/json/${TODAY}`;
       mkdirSync(jsonPath, { recursive: true });
       writeFileSync(
-        `${jsonPath}/${latitude}_{longitude}_${shopUuid}.json`,
+        `${jsonPath}/${latitude}_${longitude}_${shopUuid}.json`,
         JSON.stringify(data),
       );
     } catch (error) {

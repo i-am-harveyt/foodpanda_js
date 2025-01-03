@@ -1,6 +1,6 @@
 import getMenu from "./getMenu.js";
 import { Cookie } from "./Cookie.js";
-import { mkdirSync, readdirSync } from "fs";
+import { mkdirSync } from "fs";
 import { readCSV } from "danfojs-node";
 import { DataFrame } from "danfojs-node";
 
@@ -31,52 +31,38 @@ async function main() {
   }
 
   // read shopinformation
-  const locationPath = `../../../panda_data/shopLst/${TODAY}`;
-  let locationLst = readdirSync(locationPath);
+  const locationPath = `../../../panda_data/shopLst/rolling.csv`;
   const menuPath = `../../../panda_data_js/panda_menu/${TODAY}`;
 
-  for (const location of locationLst) {
-    if (!location.startsWith("shopLst")) continue;
-    let stores = [];
-    let df = await readCSV(`${locationPath}/${location}`);
+  let stores = [];
+  let df = await readCSV(locationPath);
+  df = df.loc({
+    columns: ["shopCode", "shopName", "anchor_latitude", "anchor_longitude"],
+  }).values;
+  console.log(`(${df[0][2]}, ${df[0][3]}): ${df.length} shops`);
+  for (const row of df)
     try {
-      df = df.loc({
-        columns: [
-          "shopCode",
-          "shopName",
-          "anchor_latitude",
-          "anchor_longitude",
-        ],
-      }).values;
+      stores.push(
+        await getMenu(
+          cookie,
+          row[0],
+          row[1],
+          row[2],
+          row[3],
+          date.getDate() >= 10 && date.getDate() < 17,
+        ),
+      );
     } catch (e) {
       console.error(e);
-      continue;
     }
-    console.log(`(${df[0][2]}, ${df[0][3]}): ${df.length} shops`);
-    for (const row of df)
-      try {
-        stores.push(
-          await getMenu(
-            cookie,
-            row[0],
-            row[1],
-            row[2],
-            row[3],
-            date.getDate() >= 10 && date.getDate() < 17,
-          ),
-        );
-      } catch (e) {
-        console.error(e);
-      }
-    const result = new DataFrame(stores);
-    result.toCSV({
-      filePath: `${menuPath}/${location}_${TODAY}.csv`,
-      header: true,
-    });
-  }
-
-  console.log("down shop catch");
+  const result = new DataFrame(stores);
+  result.toCSV({
+    filePath: `${menuPath}/${TODAY}.csv`,
+    header: true,
+  });
 }
+
+console.log("down shop catch");
 
 try {
   main();

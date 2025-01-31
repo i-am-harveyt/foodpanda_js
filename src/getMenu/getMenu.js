@@ -2,6 +2,7 @@ import sendReqMenu from "./sendReqMenu.js";
 import { Cookie } from "./Cookie.js";
 import { mkdirSync, writeFileSync } from "fs";
 import extractData from "./extractData.js";
+import { Logger } from "../lib/Logger.js";
 
 /**
  *
@@ -10,6 +11,7 @@ import extractData from "./extractData.js";
  * @param {string} shopName
  * @param {number} latitude
  * @param {number} longitude
+ * @param {Logger} logger
  */
 export default async function getMenu(
   cookie,
@@ -18,6 +20,7 @@ export default async function getMenu(
   latitude,
   longitude,
   grepJson,
+  logger,
 ) {
   // delay
   await new Promise((resolve) =>
@@ -28,15 +31,15 @@ export default async function getMenu(
     let get = await fetch(
       `https://www.foodpanda.com.tw/restaurant/${shopUuid}/`,
     );
-    console.log(shopUuid, latitude, longitude, get.status);
+    logger.info(shopUuid, latitude, longitude, get.status);
     cookie.updateCookies(get.headers.getSetCookie().join("; "));
   }
 
   let now = new Date();
 
   // fetch logic
-  let response = await sendReqMenu(cookie, shopUuid, latitude, longitude);
-  console.log(shopUuid, latitude, longitude, response.status);
+  let response = await sendReqMenu(cookie, shopUuid, latitude, longitude, logger);
+  logger.info(shopUuid, latitude, longitude, response.status);
   cookie.updateCookies(response.headers.getSetCookie().join("; "));
   const data = await response.json();
 
@@ -51,7 +54,7 @@ export default async function getMenu(
         JSON.stringify(data),
       );
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   }
 

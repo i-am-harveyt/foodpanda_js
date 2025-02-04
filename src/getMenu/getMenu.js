@@ -59,5 +59,5 @@ export default async function getMenu(
   }
 
   // data conversion
-  return extractData(data.data, now, latitude, longitude);
+  return extractData(data.data, now, latitude, longitude, logger);
 }

@@ -1,4 +1,4 @@
-import { Cookie } from "../getShop/Cookie";
+import { Cookie } from "./Cookie.js";
 import { Logger } from "../lib/Logger.js";
 
 /**

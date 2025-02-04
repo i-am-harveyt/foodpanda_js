@@ -1,5 +1,3 @@
-import { readFileSync, writeFileSync } from "fs";
-
 export class Cookie {
   cookies = {}; // The container
   keys = [];

@@ -38,17 +38,25 @@ export default async function getMenu(
   let now = new Date();
 
   // fetch logic
-  let response = await sendReqMenu(cookie, shopUuid, latitude, longitude, logger);
+  let response = await sendReqMenu(
+    cookie,
+    shopUuid,
+    latitude,
+    longitude,
+    logger,
+  );
   logger.info(shopUuid, latitude, longitude, response.status);
   cookie.updateCookies(response.headers.getSetCookie().join("; "));
   const data = await response.json();
 
   // write to json
   if (grepJson) {
+    const TODAY = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+    const jsonPath = `../../../panda_data_js/panda_menu/json/${TODAY}`;
     try {
-      const TODAY = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
-      const jsonPath = `../../../panda_data_js/panda_menu/json/${TODAY}`;
       mkdirSync(jsonPath, { recursive: true });
+    } catch (err) {}
+    try {
       writeFileSync(
         `${jsonPath}/${latitude}_${longitude}_${shopUuid}.json`,
         JSON.stringify(data),

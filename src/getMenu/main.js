@@ -39,6 +39,7 @@ async function main() {
   const menuPath = `../../../panda_data_js/panda_menu/${TODAY}`;
 
   let stores = [];
+  let retries = [];
   let df = await readCSV(locationPath);
   df = df.loc({
     columns: ["shopCode", "shopName", "anchor_latitude", "anchor_longitude"],
@@ -59,7 +60,25 @@ async function main() {
       );
     } catch (e) {
       logger.error(e);
+      retries.push([row[0], row[1], row[2], row[3]]);
     }
+  for (const retry of retries) {
+    try {
+      stores.push(
+        await getMenu(
+          cookie,
+          retry[0],
+          retry[1],
+          retry[2],
+          retry[3],
+          date.getDate() >= 10 && date.getDate() < 17,
+          logger,
+        ),
+      );
+    } catch (e) {
+      logger.error(e);
+    }
+  }
   const result = new DataFrame(stores);
   result.toCSV({
     filePath: `${menuPath}/${TODAY}.csv`,

@@ -45,36 +45,54 @@ async function main() {
     columns: ["shopCode", "shopName", "anchor_latitude", "anchor_longitude"],
   }).values;
   logger.info(`(${df[0][2]}, ${df[0][3]}): ${df.length} shops`);
-  for (const row of df)
-    try {
-      stores.push(
-        await getMenu(
-          cookie,
-          row[0],
-          row[1],
-          row[2],
-          row[3],
-          date.getDate() >= 10 && date.getDate() < 17,
-          logger,
-        ),
+
+  const grepJson = date.getdate() >= 10 && date.getDate() < 17;
+  let cnt = 0;
+
+  for (const row of df) {
+    if (cnt === 20)
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.random() * 1_000 * 60), // sleep around 1 min
       );
+    try {
+      const menu = await getMenu(
+        cookie,
+        row[0],
+        row[1],
+        row[2],
+        row[3],
+        grepJson,
+        logger,
+      );
+      const df = new DataFrame(menu);
+      df.toCSV({
+        filePath: `${menuPath}/${TODAY}-${row[0]}.csv`,
+        header: true,
+      });
+      stores.push(menu);
     } catch (e) {
       logger.error(e);
       retries.push([row[0], row[1], row[2], row[3]]);
     }
+    cnt++;
+  }
   for (const retry of retries) {
     try {
-      stores.push(
-        await getMenu(
-          cookie,
-          retry[0],
-          retry[1],
-          retry[2],
-          retry[3],
-          date.getDate() >= 10 && date.getDate() < 17,
-          logger,
-        ),
+      const menu = await getMenu(
+        cookie,
+        retry[0],
+        retry[1],
+        retry[2],
+        retry[3],
+        grepJson,
+        logger,
       );
+      const df = new DataFrame(menu);
+      df.toCSV({
+        filePath: `${menuPath}/${TODAY}-${retry[0]}.csv`,
+        header: true,
+      });
+      stores.push(menu);
     } catch (e) {
       logger.error(e);
     }

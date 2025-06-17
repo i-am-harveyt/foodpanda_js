@@ -11,6 +11,7 @@ import { Logger } from "../lib/Logger.js";
  * @param {string} shopName
  * @param {number} latitude
  * @param {number} longitude
+ * @param {boolean} grepJson
  * @param {Logger} logger
  */
 export default async function getMenu(
@@ -23,9 +24,7 @@ export default async function getMenu(
   logger,
 ) {
   // delay
-  await new Promise((resolve) =>
-    setTimeout(resolve, 1_000 * 5 + Math.random() * 1_000),
-  );
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 2_000));
 
   if (Object.keys(cookie.cookies).length === 0) {
     let get = await fetch(

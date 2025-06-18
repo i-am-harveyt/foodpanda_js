@@ -46,6 +46,9 @@ export default async function getMenu(
   );
   logger.info(shopUuid, latitude, longitude, response.status);
   cookie.updateCookies(response.headers.getSetCookie().join("; "));
+  if (!response.ok) {
+    logger.error(await response.text());
+  }
   const data = await response.json();
 
   // write to json

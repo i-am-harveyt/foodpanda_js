@@ -46,14 +46,17 @@ async function main() {
   }).values;
   logger.info(`(${df[0][2]}, ${df[0][3]}): ${df.length} shops`);
 
-  const grepJson = date.getdate() >= 10 && date.getDate() < 17;
+  // const grepJson = date.getDate() >= 10 && date.getDate() < 17;
+  const grepJson = true;
   let cnt = 0;
 
   for (const row of df) {
-    if (cnt === 20)
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.random() * 1_000 * 60), // sleep around 1 min
+    if (cnt === 20) {
+      await new Promise(
+        (resolve) => setTimeout(resolve, Math.random() * 1_000 * 60), // sleep around 1 min
       );
+      cnt = 0;
+    }
     try {
       const menu = await getMenu(
         cookie,
@@ -72,6 +75,7 @@ async function main() {
       stores.push(menu);
     } catch (e) {
       logger.error(e);
+      return;
       retries.push([row[0], row[1], row[2], row[3]]);
     }
     cnt++;

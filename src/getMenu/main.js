@@ -1,9 +1,8 @@
 import getMenu from "./getMenu.js";
 import { Cookie } from "./Cookie.js";
-import { mkdirSync } from "fs";
-import { readCSV } from "danfojs-node";
-import { DataFrame } from "danfojs-node";
+import { mkdirSync, writeFileSync } from "fs";
 import { Logger } from "../lib/Logger.js";
+import { readCSV } from "danfojs-node";
 
 const date = new Date();
 
@@ -14,6 +13,7 @@ if (date.getDate() < 10) TODAY += `-0${date.getDate()}`;
 else TODAY += `-${date.getDate()}`;
 
 const PATH = `../../../panda_data_js/panda_menu/${TODAY}`;
+const JSON_PATH = `${PATH}/json/${TODAY}`;
 
 const DEBUG_MODE = false;
 const logger = new Logger(`${TODAY}.log`);
@@ -67,45 +67,50 @@ async function main() {
         grepJson,
         logger,
       );
-      const df = new DataFrame(menu);
-      df.toCSV({
-        filePath: `${menuPath}/${TODAY}-${row[0]}.csv`,
-        header: true,
-      });
+      try {
+        writeFileSync(
+          `${JSON_PATH}/${row[2]}_${row[3]}_${row[0]}.json`,
+          JSON.stringify(menu),
+        );
+      } catch (error) {
+        logger.error(error);
+      }
       stores.push(menu);
     } catch (e) {
       logger.error(e);
-      return;
       retries.push([row[0], row[1], row[2], row[3]]);
     }
     cnt++;
   }
-  for (const retry of retries) {
+  for (const row of retries) {
     try {
       const menu = await getMenu(
         cookie,
-        retry[0],
-        retry[1],
-        retry[2],
-        retry[3],
+        row[0],
+        row[1],
+        row[2],
+        row[3],
         grepJson,
         logger,
       );
-      const df = new DataFrame(menu);
-      df.toCSV({
-        filePath: `${menuPath}/${TODAY}-${retry[0]}.csv`,
-        header: true,
-      });
+      try {
+        writeFileSync(
+          `${JSON_PATH}/${row[2]}_${row[3]}_${row[0]}.json`,
+          JSON.stringify(menu),
+        );
+      } catch (error) {
+        logger.error(error);
+      }
       stores.push(menu);
     } catch (e) {
       logger.error(e);
     }
   }
-  const result = new DataFrame(stores);
-  result.toCSV({
-    filePath: `${menuPath}/${TODAY}.csv`,
-    header: true,
-  });
+  try {
+    writeFileSync(`${JSON_PATH}/${TODAY}_all.json`, JSON.stringify(stores));
+  } catch (error) {
+    logger.error(error);
+  }
 }
 
 logger.info("down shop catch");

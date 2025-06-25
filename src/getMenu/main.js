@@ -1,5 +1,4 @@
 import getMenu from "./getMenu.js";
-import { Cookie } from "./Cookie.js";
 import { mkdirSync, writeFileSync } from "fs";
 import { Logger } from "../lib/Logger.js";
 import { readCSV } from "danfojs-node";
@@ -24,13 +23,9 @@ async function main() {
     mkdirSync(PATH, { recursive: true });
   } catch (e) {}
 
-  // init cookie
-  let cookie = new Cookie();
-  cookie.init();
-
   // 如果在 debug 模式，側特定的店家就夠了
   if (DEBUG_MODE) {
-    await getMenu(cookie, "abmy", "", 25.0531908, 121.45147382, true);
+    await getMenu("abmy", "", 25.0531908, 121.45147382, true);
     return;
   }
 
@@ -59,7 +54,6 @@ async function main() {
     }
     try {
       const menu = await getMenu(
-        cookie,
         row[0],
         row[1],
         row[2],
@@ -85,7 +79,6 @@ async function main() {
   for (const row of retries) {
     try {
       const menu = await getMenu(
-        cookie,
         row[0],
         row[1],
         row[2],

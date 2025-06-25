@@ -1,4 +1,3 @@
-import { Cookie } from "./Cookie.js";
 import { Logger } from "../lib/Logger.js";
 
 /**
@@ -7,14 +6,17 @@ import { Logger } from "../lib/Logger.js";
  * @param {string} shopUuid
  * @param {number} latitude
  * @param {number} longitude
+ * @param {string} perseusClientId 
+ * @param {string} perseusSessionId 
  * @param {Logger} logger
  * @returns Promise<Response> | boolean
  */
 export default async function sendReqMenu(
-  cookie,
   shopUuid,
   latitude,
   longitude,
+  perseusClientId,
+  perseusSessionId,
   logger,
 ) {
   try {
@@ -29,12 +31,10 @@ export default async function sendReqMenu(
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:139.0) Gecko/20100101 Firefox/139.0",
           Accept: "application/json, text/plain, */*",
           "Accept-Language": "en-US,en;q=0.5",
-          "perseus-client-id": "1744253582842.308245428132967256.txas2vn6st",
-          "perseus-session-id": "1750265276145.352734549829797010.x7ky22z890",
+          "perseus-client-id": perseusClientId,
+          "perseus-session-id": perseusSessionId,
           "X-PD-Language-ID": "6",
           "X-FP-API-KEY": "volo",
-          "dps-session-id":
-            "eyJzZXNzaW9uX2lkIjoiMzJlMjQ0OTUzMGJlNmIxNmVlY2RiZTFlMDg2M2Q1MDUiLCJwZXJzZXVzX2lkIjoiMTc0NDI1MzU4Mjg0Mi4zMDgyNDU0MjgxMzI5NjcyNTYudHhhczJ2bjZzdCIsInRpbWVzdGFtcCI6MTc1MDI2NTI3OX0=",
           Authorization: "",
           "Api-Version": "7",
           "Sec-GPC": "1",

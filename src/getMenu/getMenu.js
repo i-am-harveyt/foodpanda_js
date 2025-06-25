@@ -29,7 +29,26 @@ export default async function getMenu(
   if (Object.keys(cookie.cookies).length === 0) {
     let get = await fetch(
       `https://www.foodpanda.com.tw/restaurant/${shopUuid}/`,
-    );
+      {
+        "credentials": "omit",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:139.0) Gecko/20100101 Firefox/139.0",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Language": "en-US,en;q=0.5",
+          "Sec-GPC": "1",
+          "Upgrade-Insecure-Requests": "1",
+          "Sec-Fetch-Dest": "document",
+          "Sec-Fetch-Mode": "navigate",
+          "Sec-Fetch-Site": "cross-site",
+          "Sec-Fetch-User": "?1",
+          "Priority": "u=0, i",
+          "Pragma": "no-cache",
+          "Cache-Control": "no-cache"
+        },
+        "referrer": "https://www.google.com/",
+        "method": "GET",
+        "mode": "cors"
+      });
     logger.info(shopUuid, latitude, longitude, get.status);
     cookie.updateCookies(get.headers.getSetCookie().join("; "));
   }
@@ -57,7 +76,7 @@ export default async function getMenu(
     const jsonPath = `../../../panda_data_js/panda_menu/json/${TODAY}`;
     try {
       mkdirSync(jsonPath, { recursive: true });
-    } catch (err) {}
+    } catch (err) { }
     try {
       writeFileSync(
         `${jsonPath}/${latitude}_${longitude}_${shopUuid}.json`,

@@ -2,12 +2,11 @@ import { Logger } from "../lib/Logger.js";
 
 /**
  * This function is used to send request and get response
- * @param {Cookie} cookie
  * @param {string} shopUuid
  * @param {number} latitude
  * @param {number} longitude
- * @param {string} perseusClientId 
- * @param {string} perseusSessionId 
+ * @param {string} perseusClientId
+ * @param {string} perseusSessionId
  * @param {Logger} logger
  * @returns Promise<Response> | boolean
  */
@@ -19,6 +18,7 @@ export default async function sendReqMenu(
   perseusSessionId,
   logger,
 ) {
+  const now = new Date();
   try {
     return await fetch(
       `https://tw.fd-api.com/api/v5/vendors/${shopUuid}?` +
@@ -33,6 +33,7 @@ export default async function sendReqMenu(
           "Accept-Language": "en-US,en;q=0.5",
           "perseus-client-id": perseusClientId,
           "perseus-session-id": perseusSessionId,
+          "dps-session-id": `undefined_undefined_${perseusClientId}_${Math.round(now.getTime() / 1e3)}_${Math.round(now.setSeconds(now.getSeconds() + 1800) / 1e3)}`,
           "X-PD-Language-ID": "6",
           "X-FP-API-KEY": "volo",
           Authorization: "",

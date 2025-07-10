@@ -21,31 +21,35 @@ export default async function getMenu(
   logger,
 ) {
   // delay
-  await new Promise((resolve) => setTimeout(resolve, Math.random() * 2_000));
+  await new Promise((resolve) =>
+    setTimeout(resolve, Math.random() * 1_000 + 1_000),
+  );
 
   let get = await fetch(
     `https://www.foodpanda.com.tw/restaurant/${shopUuid}/`,
     {
-      "credentials": "omit",
-      "headers": {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:139.0) Gecko/20100101 Firefox/139.0",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.5",
-        "Sec-GPC": "1",
-        "Upgrade-Insecure-Requests": "1",
-        "Sec-Fetch-Dest": "document",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "cross-site",
-        "Sec-Fetch-User": "?1",
-        "Priority": "u=0, i",
-        "Pragma": "no-cache",
-        "Cache-Control": "no-cache"
+      headers: {
+        accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "accept-language": "en-US,en;q=0.7",
+        priority: "u=0, i",
+        "sec-ch-ua":
+          '"Brave";v="137", "Chromium";v="137", "Not/A)Brand";v="24"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"macOS"',
+        "sec-fetch-dest": "document",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-site": "none",
+        "sec-fetch-user": "?1",
+        "sec-gpc": "1",
+        "upgrade-insecure-requests": "1",
       },
-      "referrer": "https://www.google.com/",
-      "method": "GET",
-      "mode": "cors"
-    });
-  logger.info(shopUuid, latitude, longitude, get.status);
+      referrer: "https://www.google.com/",
+      method: "GET",
+      mode: "cors",
+    },
+  );
+
   const setCookie = get.headers.getSetCookie();
   let perseus_client_id = "";
   let perseus_session_id = "";
@@ -63,13 +67,13 @@ export default async function getMenu(
     shopUuid,
     latitude,
     longitude,
-    perseus_client_id,
-    perseus_session_id,
+    "1751293229242.035865992059667991.ctokxyw375",
+    "1751299673870.686325495878323394.2hc61mq3mq",
     logger,
   );
   logger.info(shopUuid, latitude, longitude, response.status);
-  if (!response.ok) {
-    logger.error(await response.text());
+  if (!response) {
+    logger.error(`${shopUuid}, ${latitude}, ${longitude} Failed`);
   }
   const data = await response.json();
 
@@ -79,15 +83,13 @@ export default async function getMenu(
     const jsonPath = `../../../panda_data_js/panda_menu/json/${TODAY}`;
     try {
       mkdirSync(jsonPath, { recursive: true });
-    } catch (err) { }
+    } catch (err) {}
     try {
       writeFileSync(
         `${jsonPath}/${latitude}_${longitude}_${shopUuid}.json`,
         JSON.stringify(data),
       );
-    } catch (error) {
-      logger.error(error);
-    }
+    } catch (error) {}
   }
 
   // data conversion
